@@ -1,7 +1,7 @@
 ---
 fontfamily: libertinus
 geometry:
-    - margin=1in
+   - margin=1in
 papersize: letter
 pdf-engine: lualatex
 ---
@@ -15,13 +15,16 @@ Location: Eaton Hall ??? <br/>
 Instructor: Charles Pletcher (charles.pletcher@tufts.edu) <br/>
 Instructor Office Hours: TTh 3–4pm <br/>
 
+Teaching Assistant: Zoë Spriggs (zoe.spriggs@tufts.edu) <br/>
+TA Office Hours: TBD
+
 ## Prerequisites
 
 None
 
 ## Description
 
-espite the recent proliferation in digital sources for a variety of literary
+Despite the recent proliferation in digital sources for a variety of literary
 fields and subfields, quantitative textual analysis has often been viewed as
 anathema to pursuits in the humanities. Rather than set computational and
 literary methods at odds, this course seeks to reconcile them through careful
@@ -50,10 +53,11 @@ Successfully completing this course will equip students to
 
 This course will prepare students to:
 
-1. Describe the process of creating useful corpora
-2. Analyze linguistic corpora using statistical methods and the R programming language
+1. Build textual corpora from a variety of sources
+2. Analyze textual corpora using statistical methods and the R programming language
 3. Test and evaluate hypotheses based on these analyses
-4. Apply these techniques to literary works within their fields of expertise
+4. Apply these techniques to works within their fields of expertise
+5. Work with embeddings and language models to answer specific research questions
 
 ## Required Textbook
 
