@@ -10,13 +10,12 @@ pdf-engine: lualatex
 
 ## Details
 
-Time: Th 6–9pm <br/>
-Location: Eaton Hall ??? <br/>
-Instructor: Charles Pletcher (charles.pletcher@tufts.edu) <br/>
-Instructor Office Hours: TTh 3–4pm <br/>
-
-Teaching Assistant: Zoë Spriggs (zoe.spriggs@tufts.edu) <br/>
-TA Office Hours: TBD
+- Time: Th 6–9pm
+- Location: Eaton Hall 211
+- Instructor: Charles Pletcher (charles.pletcher@tufts.edu)
+- Instructor Office Hours: TTh 3–4pm
+- Teaching Assistant: Zoë Spriggs (zoe.spriggs@tufts.edu)
+- TA Office Hours: TBD
 
 ## Prerequisites
 
@@ -48,8 +47,6 @@ NB: Although programming is a major part of this course, the focus is on
 corpus linguistics and statistical methods, not on programming per se.
 
 ## Learning objectives
-
-Successfully completing this course will equip students to
 
 This course will prepare students to:
 

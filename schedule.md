@@ -2,6 +2,8 @@
 fontfamily: libertinus
 geometry:
     - margin=1in
+header-includes:
+    - \usepackage{emoji}
 papersize: letter
 pdf-engine: lualatex
 ---
