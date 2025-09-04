@@ -10,11 +10,15 @@ pdf-engine: lualatex
 
 # Quantitative Textual Analysis – Fall 2025 – Course Schedule
 
-As a friendly reminder, you should never use generative AI (e.g., Claude, ChatGPT, vel sim.) to write your lab report for you, even if the lab requires you to use a language model in your analysis.
+As a friendly reminder, you should never use generative AI (e.g., Claude, ChatGPT, vel sim.)
+to write your lab report for you, even if the lab requires you to use a language model in your
+analysis.
 
-These lab reports are spaces for you to think. Out-sourcing your thoughts to a language model deprives you of that opportunity and prevents you from learning the material.
+These lab reports are spaces for you to think. Out-sourcing your thoughts to a language model
+deprives you of that opportunity and prevents you from learning the material.
 
-Using generative AI to write your lab report will be considered a serious violation of the Tufts University Honor Code.
+Using generative AI to write your lab report will be considered a serious violation of the Tufts
+University Honor Code.
 
 ## 1. September 4
 
@@ -42,7 +46,9 @@ Using generative AI to write your lab report will be considered a serious violat
 
 - Reading quiz
 - _Mapping Texts_ ch. 5
-    - Discussion: What corpora should we build? Working in groups of 3 or 4, decide on what kind of corpus you want to build. Where can you find enough data to answer your research questions? What techniques will you need to use to acquire text?
+    - Discussion: What corpora should we build? Working in groups of 3 or 4, decide on what kind
+of corpus you want to build. Where can you find enough data to answer your research questions? What
+techniques will you need to use to acquire text?
     - Techniques:
         - OCR
         - Audio transcription

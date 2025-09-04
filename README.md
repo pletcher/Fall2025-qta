@@ -13,7 +13,7 @@ pdf-engine: lualatex
 - Time: Th 6–9pm
 - Location: Eaton Hall 211
 - Instructor: Charles Pletcher (charles.pletcher@tufts.edu)
-- Instructor Office Hours: TTh 3–4pm
+- Instructor Office Hours: TTh 3–4pm or by appointment (https://cal.com/pletcher)
 - Teaching Assistant: Zoë Spriggs (zoe.spriggs@tufts.edu)
 - TA Office Hours: TBD
 
@@ -58,7 +58,8 @@ This course will prepare students to:
 
 ## Required Textbook
 
-Stoltz, Dustin S. and Marshall A. Taylor. 20204. _Mapping Texts: Computational Text Analysis for the Social Sciences_. Oxford: Oxford University Press.
+Stoltz, Dustin S. and Marshall A. Taylor. 20204. _Mapping Texts: Computational Text Analysis for the
+Social Sciences_. Oxford: Oxford University Press.
 
 ## [Schedule](./schedule.md)
 
@@ -92,8 +93,8 @@ Obviously emergencies happen, and everyone is allowed one (1) unexcused
 absence. Further unexcused absences will result in a deduction of half a
 letter grade _from your final grade_.
 
-Excused absences are easy to obtain: please just give me as much notice as possible. (I try
-to keep track of religious holidays, but a heads-up is always appreciated.)
+Excused absences are easy to obtain: please just give me as much notice as possible. (I try to keep
+track of religious holidays, but a heads-up is always appreciated.)
 
 ### 1/6 Reading quizzes
 
