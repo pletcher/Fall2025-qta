@@ -15,8 +15,8 @@ pdf-engine: lualatex
 - Instructor: Charles Pletcher (charles.pletcher@tufts.edu)
 - Instructor Office Hours: TTh 3–4pm or by appointment (https://cal.com/pletcher)
 - Teaching Assistant: Zoë Spriggs (zoe.spriggs@tufts.edu)
-- TA Office Hours: TBD
-
+- TA Office Hours: By appointment (https://cal.com/zspriggs)
+  
 ## Prerequisites
 
 None
