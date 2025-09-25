@@ -67,7 +67,7 @@ techniques will you need to use to acquire text?
 
 ### Homework
 
-- [Lab 1](./labs/01_text_to_numbers.md)
+- [Lab 1](./labs/01_text_to_numbers_lab.md)
 - Read _Mapping Texts_ ch. 7
 
 ## 5. October 2
