@@ -24,3 +24,6 @@ Write a (3-5–page) lab report:
 4.  Analyze your results
 5.  Briefly discuss conclusions, limitations of your approach, and
     potential future work
+
+Note: You will probably want to store the results of these calculations in
+a CSV or other file format that can easily be read into a DataFrame.
