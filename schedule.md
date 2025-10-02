@@ -45,15 +45,9 @@ University Honor Code.
 ## 3. September 18
 
 - Reading quiz
-- _Mapping Texts_ ch. 5
-    - Discussion: What corpora should we build? Working in groups of 3 or 4, decide on what kind
-of corpus you want to build. Where can you find enough data to answer your research questions? What
-techniques will you need to use to acquire text?
-    - Techniques:
-        - OCR
-        - Audio transcription
-        - APIs
-        - Web scraping
+- _Mapping Texts_ ch. 5 - Discussion: What corpora should we build? Working in groups of 3 or 4, decide on what kind
+  of corpus you want to build. Where can you find enough data to answer your research questions? What
+  techniques will you need to use to acquire text? - Techniques: - OCR - Audio transcription - APIs - Web scraping
 - Corpus assembly workshop: Having determined where you will need to look to find textual data, go get it!
 
 ### Homework
@@ -130,7 +124,7 @@ techniques will you need to use to acquire text?
 
 ### Homework
 
-- [Lab 4](./labs/04_prediction.md)
+- [Lab 4](./labs/04_classification.md)
 - Reading _Mapping Texts_ ch. 13
 
 ## 11. November 13
