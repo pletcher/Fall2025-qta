@@ -55,6 +55,10 @@ corpus_cmu_blogs100 |>
     count(gender)
 ```
 
+```{r}
+corpus_cmu_blogs100 |> unnest_tokens(word, text) |> count()
+```
+
 Use a somewhat larger (still dictionary-based) gender-tagger:
 
 ```{r}
@@ -62,6 +66,10 @@ corpus_cmu_blogs100 |>
     unnest_tokens(word, text) |>
     left_join(tiny_gender_tagger(), by="word") |>
     count(gender)
+```
+
+```{r}
+help(tiny_gender_tagger)
 ```
 
 Let's try to infer gender from names:
@@ -89,6 +97,14 @@ ssa_national |>
 df_tagged <- unique(df_ars$fname) |> gender()
 
 nrow(df_tagged)
+```
+
+```{r}
+help(gender)
+```
+
+```{r}
+unique(df_ars$fname)
 ```
 
 ```{r}
@@ -121,3 +137,73 @@ waffle_grid |>
         axis.text = element_blank(), panel.grid = element_blank()) +
     labs(title = "Authors' Predicted Gender", x = NULL, y = NULL)
 ```
+
+## Named-Entity Recognition
+
+Normally performed in multiple steps:
+
+1. Tagging: Identifying whether a token is a person, place, organization, location, time, etc.
+2. Linking: Connecting tagged tokens to canonical references.
+
+Let's focus on the first part.
+
+### Training
+
+NER algorithms use pre-tagged training data, from which the model builds context and weights for
+identifying other named entities.
+
+The precise methods for classical or deep machine learning training of NER models are outside
+the scope of this class. At a high level, the statistical models look at "feature sets" which
+contain "context variables." To the examples that Stoltz and Taylor (2024) give on p. 132,
+we might add, "Does the word _precede_ the token `where` [within a window of size n]?"
+or "Does the word include a known demonym suffix like `-ian`?"
+
+Note that word embeddings make NER even easier, as we can directly compare word vectors
+to identify tokens that even well-trained supervised ML models might miss.
+
+```{r}
+install.packages("openNLP")
+```
+
+```{r}
+remotes::install_github("trinker/entity")
+```
+
+```{r}
+para <- "There are some who say that the study of philosophy had its beginning among the barbarians. They urge that the Persians have had their Magi, the Babylonians or Assyrians their Chaldaeans, and the Indians their Gymnosophists; and among the Celtics and Gauls there are the people called Druids or Holy Ones, for which they cite as authorities the Magicus of Aristotle and Sotion in the twenty-third[*] book of his Succession of Philosophers. Also they say that Mochus was a Phoenician, Zamolxis a Thracian, and Atlas a Libyan.
+
+If we may believe the Egyptians, Hephaestus was the son of the Nile, and with him philosophy began, priests and prophets being its chief exponents.
+
+Hephaestus lived 48,863 years before Alexander of Macedon, and in the interval there occurred 373 solar and 832 lunar eclipses.
+
+The date of the Magians, beginning with Zoroaster the Persian, was 5000 years before the fall of Troy, as given by Hermodorus the Platonist in his work on mathematics; but Xanthus the Lydian reckons 6000 years from Zoroaster to the expedition of Xerxes, and after that event he places a long line of Magians in succession, bearing the names of Ostanas, Astrampsychos, Gobryas, and Pazatas, down to the conquest of Persia by Alexander.
+
+These authors forget that the achievements which they attribute to the barbarians belong to the Greeks, with whom not merely philosophy but the human race itself began. For instance, Musaeus is claimed by Athens, Linus by Thebes. It is said that the former, the son of Eumolpus, was the first to compose a genealogy of the gods and to construct a sphere, and that he maintained that all things proceed from unity and are resolved again into unity. He died at Phalerum, and this is his epitaph:
+
+Musaeus, to his sire Eumolpus dear,
+In Phalerean soil lies buried here;
+and the Eumolpidae at Athens get their name from the father of Musaeus."
+```
+
+```{r}
+entity::person_entity(para)
+```
+
+```{r}
+entity:::date_entity(para)
+```
+
+```{r}
+data("corpus_cmu_blogs100", package = "text2map.corpora")
+blogs <- corpus_cmu_blogs100
+```
+
+## Part-of-Speech and Dependency Parsing
+
+Like NER, part-of-speech tagging can use dictionary-based approaches as well as probabilistic
+models to identify parts of speech by context.
+
+### Dependency Parsing
+
+Dependency parsing goes a step farther than POS tagging by predicting relationships
+between words — for example, which noun governs which verb.
