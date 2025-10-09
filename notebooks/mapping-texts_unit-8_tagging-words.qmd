@@ -1,0 +1,123 @@
+---
+title: Mapping Texts - Unit 8 - Tagging Words
+format:
+    html:
+        code-fold: true
+---
+
+# Tagging Words
+
+Install dependencies:
+
+```{r}
+install.packages(c("tidytext", "tidyverse", "text2map", "gender", "stringi"))
+```
+
+Trying to acquire the `genderdata` package directly:
+
+```{r}
+library(remotes)
+remotes::install_github("lmullen/genderdata")
+```
+
+Require packages:
+
+```{r}
+library(tidytext)
+library(tidyverse)
+library(text2map)
+library(gender)
+library(genderdata)
+library(stringi)
+```
+
+## Dictionary Tagging
+
+Some basic tagging:
+
+```{r}
+fem_pronouns <- c("she", "her", "hers")
+mas_pronouns <- c("he", "him", "his")
+gender <- data.frame(
+    word = c(fem_pronouns, mas_pronouns),
+    gender = c(rep("feminine", 3), rep("masculine", 3))
+)
+```
+
+Load an example corpus:
+
+```{r}
+data("corpus_cmu_blogs100", package = "text2map.corpora")
+
+corpus_cmu_blogs100 |> 
+    unnest_tokens(word, text) |> 
+    left_join(gender, by = "word") |> 
+    count(gender)
+```
+
+Use a somewhat larger (still dictionary-based) gender-tagger:
+
+```{r}
+corpus_cmu_blogs100 |>
+    unnest_tokens(word, text) |>
+    left_join(tiny_gender_tagger(), by="word") |>
+    count(gender)
+```
+
+Let's try to infer gender from names:
+
+```{r}
+data("corpus_annual_review", package = "text2map.corpora")
+
+df_ars <- corpus_annual_review |>
+    mutate(fname = gsub("^(.*?)\\s.*", "\\1", authors),
+    fname = tolower(fname))
+
+unique(df_ars$fname)
+```
+
+```{r}
+data("ssa_national", package = "genderdata")
+
+names <- c("irving", "myrna")
+ssa_national |> 
+    filter(name %in% names) |>
+    filter(year == 1915)
+```
+
+```{r}
+df_tagged <- unique(df_ars$fname) |> gender()
+
+nrow(df_tagged)
+```
+
+```{r}
+df_tagged <- df_ars |>
+    mutate(fname = stri_trans_general(fname, "Any-Latin; Latin-ASCII"))
+
+df_tagged <- unique(df_tagged$fname) |> gender()
+
+nrow(df_tagged)
+```
+
+```{r}
+df_ars <- left_join(df_ars, df_tagged, by = c("fname" = "name"))
+
+df_ars <- df_ars |>
+    count(gender) |>
+    mutate(gender = replace_na(gender, "missing"))
+```
+
+Plot it:
+
+```{r}
+waffle_grid <- expand.grid(y = 1:7, x = seq_len(sum(df_ars$n) / 7))
+waffle_grid$cell <- rep(df_ars$gender, df_ars$n)
+
+waffle_grid |>
+    ggplot(aes(x = x, y = y, fill = cell)) +
+    geom_tile(color = "white") +
+    theme(axis.ticks = element_blank(), axis.line = element_blank(),
+        axis.text = element_blank(), panel.grid = element_blank()) +
+    labs(title = "Authors' Predicted Gender", x = NULL, y = NULL)
+```

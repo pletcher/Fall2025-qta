@@ -82,7 +82,7 @@ University Honor Code.
 
 ### Homework
 
-- [Lab 2](./labs/01_text_wrangling.md)
+- [Lab 2](./labs/02_text_wrangling.md.md)
 - Read _Mapping Texts_ ch. 9
 
 ## 7. October 16
