@@ -1,0 +1,106 @@
+---
+title: Mapping Texts - Unit 9 - Core Deductive
+format:
+    html:
+        code-fold: true
+---
+
+# Core Deductive
+
+Deductive reasoning starts from a principle and looks for it in data.
+
+## Discrete Indicators
+
+Discrete indicators typically map the _presence_ or _absence_ of a feature, or
+they assign a specific category (out of a finite list) to an object of study.
+
+What happens when we ask people to assign categories to a corpus?
+
+### Inter-rater reliability
+
+Raters are not expected to agree, and we need a way to account for _how much_
+they disagree: low agreement relative to the _expected_ disagreement (ie., the
+disagreement if it categories were assigned entirely by chance).
+
+A common measure of inter-rater reliability is Krippendorff's α: the
+closer this measure is to $1$, the more "reliable" (in the technical sense)
+the raters are said to be.
+
+#### Krippendorff's α (alpha)
+
+$1-\frac{\text{Observed Disagreement}}{\text{Expected Disagreement}}$
+
+For some interesting discussion on inter-rater reliability, see:
+
+Melanie Andresen, Benjamin Krautter, Janis Pagel, and Nils Reiter. 2022. 
+“Who Knows What in German Dramas? A Composite Annotation Scheme for Knowledge Transfer.” 
+_Journal of Computational Literary Studies_ 1. https://doi.org/10.48694/JCLS.107. 
+
+A test example:
+
+```{r}
+library(irr)
+
+mat <- matrix(0, nrow=3, ncol=5)
+
+mat[, 1] <- c(1, 0, 1)
+mat[, 2] <- c(0, 0, 0)
+mat[, 3] <- c(1, 1, 1)
+mat[, 4] <- c(0, 0, 0)
+mat[, 5] <- c(1, 1, 1)
+
+kripp.alpha(mat, method="nominal")
+```
+
+```{r}
+library(tidyverse)
+data("corpus_presidential", package = "text2map.corpora")
+
+df_pres <- corpus_presidential |> select(year, party, text)
+```
+
+```{r}
+unigrams <- c("bureaucrat", "loophole", "millionaire", "baron", "venal", "crooked", "unresponsive", "uncaring", "arrogant")
+
+tkns <- df_pres$text |> str_replace_all("[[:punct:]]+")
+```
+
+## Weighted Indicators
+
+Not all data is discrete, of course. Even something as seemingly simple as
+"sentiment" — "is this token/sentence positive or negative?" — carries
+nuance that we lose when we use discrete indicators.
+
+For these use cases, we can turn to weighted indicators.
+
+### Frequency-weighted indicators
+
+Frequency-weighted inidicators, as their name suggests, describe
+a term's "importance" — or "weight" — through the count of its
+occurrences in a corpus.
+
+But as we've discussed, just because a word appears frequently doesn't
+mean that it offers a particularly apt description of an entity or corpus.
+In these cases, we turn to
+
+### Term-weighted dictionaries
+
+Term-weighted dictionaries capture the relative "strength"
+of one term in relation to others within the dictionary. To riff
+on Stoltz and Taylor's example on p. 159, `"abhor"` might have a
+higher term weight than `"hate"` in our dictionary.
+
+Term-weighted dictionaries are useful for computational linguists 
+because they can capture elements of how language is used and
+offer us insight into the sorts of _norms_ that derive only from
+relatively high quantities of observation.
+
+Even term-weighted dictionaries, however, suffer from being
+unable to capture the importance of qualifiers that are divorced
+from their contexts. To try to account for such qualifiers — like "ain't," "don't," "not," etc. —
+we can use a dictionary of "valence shifters." (See the example on p. 162.)
+
+## Machine Learning and Term-weighted Dictionaries
+
+If you would like to follow along, I'll walk through Stoltz and Taylor's code for
+building a term-weighted dictionary from a pre-labeled corpus (pp. 164–167).
