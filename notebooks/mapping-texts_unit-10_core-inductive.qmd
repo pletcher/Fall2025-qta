@@ -1,0 +1,40 @@
+---
+title: Mapping Texts - Unit 10 - Core Inductive
+format:
+    html:
+        code-fold: true
+---
+
+# Core Inductive
+
+Measuring similarity is one of the central applications of inductive 
+reasoning in corpus linguistics. At its most basic, we can think of it
+as matching tokens among documents:
+
+```{r}
+library(tidyverse)
+library(text2map)
+library(text2vec)
+
+tiny_corpus <- data.frame(
+    id = 1:3,
+    docs = c(c("hold fast to dreams"),
+        c("for when dreams go"),
+        c("life is a barren field"))
+)
+
+tiny_dtm <- tiny_corpus |> dtm_builder(docs, id, dense = TRUE)
+tiny_tdm <- t(tiny_dtm)
+row1 <- tiny_dtm[1, ]
+col1 <- tiny_tdm[, 2]
+
+proj <- sum(row1 * col1) |> print()
+tcrossprod(tiny_dtm)
+```
+
+(Note that when performing this on your own corpus, you might want to lemmatize your document
+first.)
+
+As the example above shows, `doc1` and `doc2` share the term "dreams"; `doc2` and `doc3`,
+by contrast, share no tokens.
+

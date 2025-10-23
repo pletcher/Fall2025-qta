@@ -13,7 +13,7 @@ pdf-engine: lualatex
 - Time: Th 6–9pm
 - Location: Eaton Hall 211
 - Instructor: Charles Pletcher (charles.pletcher@tufts.edu)
-- Instructor Office Hours: TTh 3–4pm or by appointment (https://cal.com/pletcher)
+- Instructor Office Hours: TTh 5-6pm or by appointment (https://cal.com/pletcher)
 - Teaching Assistant: Zoë Spriggs (zoe.spriggs@tufts.edu)
 - TA Office Hours: By appointment (https://cal.com/zspriggs)
   

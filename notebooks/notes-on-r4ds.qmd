@@ -1,0 +1,179 @@
+# R for Data Science
+
+## Introduction
+
+```{r}
+# install.packages(
+#     c(
+#         "arrow", "babynames", "curl", "duckdb", "gapminder",
+#         "ggrepel", "ggridges", "ggthemes", "hexbin", "janitor", "Lahman"
+#     )
+# )
+```
+
+```{r}
+install.packages("terra")
+```
+
+```{r}
+install.packages(
+    c(
+        "leaflet", "maps", "nycflights13", "openxlsx", "palmerpenguins",
+        "repurrrsive", "tidymodels", "writexl"
+    )
+)
+```
+
+```{r}
+library(tidyverse)
+```
+
+## Whole game
+
+### 1. Data visualization
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+library(ggthemes)
+```
+
+```{r}
+ggplot(
+    data = penguins,
+    mapping = aes(
+        x = flipper_length_mm, 
+        y = body_mass_g
+    )
+) + 
+geom_point(mapping = aes(color = species, shape = species)) + 
+geom_smooth(method = "lm")
+```
+
+```{r}
+?aes
+```
+
+
+#### Exercise 8
+
+```{r}
+ggplot(
+    data = penguins,
+    mapping = aes(
+        x = flipper_length_mm,
+        y = body_mass_g
+    )
+) +
+geom_point(mapping = aes(color = bill_depth_mm)) +
+geom_smooth()
+```
+
+#### Exercise 9
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = island)
+) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+```
+
+#### Exercise 10
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point() +
+  geom_smooth()
+```
+
+```{r}
+ggplot() +
+  geom_point(
+    data = penguins,
+    mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  ) +
+  geom_smooth(
+    data = penguins,
+    mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  )
+```
+
+#### 1.3 ggplot2 calls
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g, color = species)) + 
+  geom_point() + geom_smooth(method = "lm")
+```
+
+::: {.callout-note}
+Typically, the first one or two arguments to a function are so important that you should know them by heart. The first two arguments to ggplot() are data and mapping, in the remainder of the book, we won’t supply those names. That saves typing, and, by reducing the amount of extra text, makes it easier to see what’s different between plots. That’s a really important programming concern that we’ll come back to in Chapter 25.
+:::
+
+### 2. Workflow: basics
+
+### 3. Data transformation
+
+### 4. Workflow: code style
+
+### 5. Data tidying
+
+### 6. Workflow: scripts and projects
+
+### 7. Data import
+
+### 8. Workflow: getting help
+
+## Visualize
+
+### 9. Layers
+
+### 10. Exploratory data analysis
+
+### 11. Communication
+
+## Transform
+
+### 12. Logical vectors
+
+### 13. Numbers
+
+### 14. Strings
+
+### 15. Regular expressions
+
+### 16. Factors
+
+### 17. Dates and times
+
+### 18. Missing values
+
+### 19. Joins
+
+## Import
+
+### 20. Spreadsheets
+
+### 21. Databases
+
+### 22. Arrow
+
+### 23. Hierarchical data
+
+### 24. Web scraping
+
+## Program
+
+### 25. Functions
+
+### 26. Iteration
+
+### 27. A field guide to base R
+
+## Communicate
+
+### 28. Quarto

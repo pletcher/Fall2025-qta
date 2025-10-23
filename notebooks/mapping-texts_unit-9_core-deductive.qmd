@@ -20,7 +20,7 @@ What happens when we ask people to assign categories to a corpus?
 
 Raters are not expected to agree, and we need a way to account for _how much_
 they disagree: low agreement relative to the _expected_ disagreement (ie., the
-disagreement if it categories were assigned entirely by chance).
+disagreement if categories were assigned entirely by chance).
 
 A common measure of inter-rater reliability is Krippendorff's α: the
 closer this measure is to $1$, the more "reliable" (in the technical sense)
@@ -104,3 +104,127 @@ we can use a dictionary of "valence shifters." (See the example on p. 162.)
 
 If you would like to follow along, I'll walk through Stoltz and Taylor's code for
 building a term-weighted dictionary from a pre-labeled corpus (pp. 164–167).
+
+```{r}
+shelley <- data.frame(
+    text = c(
+        "destroy your own creature oh praise the eternal justice",
+        "of man yet i ask you not to spare me listen to me and",
+        "then if you can and if you will destroy"
+    )
+)
+
+butler <- data.frame(
+    text = c(
+        "we are earthlife maturing",
+        "earthlife preparing to fall away from the parent world",
+        "we are earthlife"
+    )
+)
+
+shelley$butler <- 0
+butler$butler <- 1
+
+corpus <- rbind(butler, shelley)
+
+corpus
+```
+
+```{r}
+install.packages(c("tidymodels", "rsample", "sentimentr", "glmnet"))
+```
+
+```{r}
+library(text2map)
+library(sentimentr)
+library(tidymodels)
+library(rsample)
+library(text2vec)
+library(glmnet)
+library(stringr)
+library(tibble)
+```
+
+```{r}
+dtm <- corpus |>
+    rowid_to_column(var = "doc_id") |>
+    dtm_builder(text, doc_id = doc_id)
+
+dtm <- as.data.frame(as.matrix(dtm))
+
+dtm$butler <- corpus$butler
+```
+
+```{r}
+mod <- glm(butler ~ ., family = binomial, data = dtm)
+
+round(coef(mod)["destroy"], 6)
+```
+
+```{r}
+data("corpus_senti_bench4k", package = "text2map.corpora")
+
+df <- corpus_senti_bench4k |>
+    mutate(text = tolower(text),
+        text = gsub("[[:punct:]]+", " ", text),
+        text = gsub("[[:digit:]]+", " ", text),
+        text = str_squish(text)) |>
+    mutate(positive = ifelse(polarity > 0, TRUE, FALSE))
+
+df
+```
+
+```{r}
+install.packages("udpipe")
+```
+
+
+```{r}
+set.seed(5439)
+init <- initial_split(df, prop = 3 / 4, strata = "source")
+df_train <- training(init)
+df_test <- testing(init)
+
+dtm_train <- df_train |>
+    dtm_builder(text, doc_id = doc_id) |>
+    dtm_stopper(stop_docfreq = c(15, 2700))
+dtm_train <- dtm_train[, sort(colnames(dtm_train))]
+
+dtm_test <- df_test |>
+    dtm_builder(text, doc_id = doc_id, vocab = colnames(dtm_train))
+
+dtm_train <- normalize(dtm_train)
+dtm_test <- normalize(dtm_test)
+```
+
+```{r}
+fit <- cv.glmnet(
+    x = dtm_train,
+    y = df_train$positive,
+    family = "binomial",
+    intercept = FALSE
+)
+
+confusion.glmnet(fit,
+    newx = dtm_test,
+    newy = df_test$positive,
+    s = "lambda.min")
+```
+
+```{r}
+data("hash_sentiment_jockers_rinker", package = "lexicon")
+
+dict <- data.frame(term = rownames(coef(fit)),
+    weight = coef(fit)[, 1])
+
+dict <- inner_join(dict, hash_sentiment_jockers_rinker, by = c("term" = "x"))
+
+cor(dict$weight, dict$y)
+```
+
+```{r}
+library(udpipe)
+
+
+df_trip <- udpipe_annotate(x = corpus_senti_bench4k$text
+```
