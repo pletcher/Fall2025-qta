@@ -7,9 +7,7 @@ format:
 
 # Core Inductive
 
-Measuring similarity is one of the central applications of inductive 
-reasoning in corpus linguistics. At its most basic, we can think of it
-as matching tokens among documents:
+Measuring similarity is one of the central applications of inductive reasoning in corpus linguistics. At its most basic, we can think of it as matching tokens among documents:
 
 ```{r}
 library(tidyverse)
@@ -32,9 +30,107 @@ proj <- sum(row1 * col1) |> print()
 tcrossprod(tiny_dtm)
 ```
 
-(Note that when performing this on your own corpus, you might want to lemmatize your document
-first.)
+(Note that when performing this on your own corpus, you might want to lemmatize your document first.)
 
-As the example above shows, `doc1` and `doc2` share the term "dreams"; `doc2` and `doc3`,
-by contrast, share no tokens.
+As the example above shows, `doc1` and `doc2` share the term "dreams"; `doc2` and `doc3`, by contrast, share no tokens.
 
+## Topic Modeling
+
+### LSA
+
+```{r}
+library(tidyverse)
+library(tidytext)
+library(text2map)
+library(lsa)
+library(topicmodels)
+library(topicdoc)
+```
+
+```{r}
+data("data_corpus_sotu", package = "quanteda.corpora")
+
+df <- tidy(data_corpus_sotu) |>
+    filter(Date >= "1993-02-07") |>
+    mutate(
+        year = gsub("(\\d+)-.*", "\\1", Date),
+        doc_id = paste0(President, "_", year),
+        text = tolower(text),
+        text = gsub("\\w+[_'-]+\\w+", "", text),
+        text = gsub("[[:punct:]]+", " ", text),
+        text = gsub("[[:digit:]]+", " ", text),
+        text = str_squish(text)
+    )
+```
+
+```{r}
+dtm_sotu <- df |>
+    dtm_builder(text, doc_id) |>
+    dtm_stopper(stop_list = get_stoplist("snowball2014"))
+```
+
+```{r}
+svd_sotu <- svd(dtm_sotu)
+
+prop.table(svd_sotu$d^2) |> head()
+```
+
+```{r}
+lsa_sotu <- lsa(t(dtm_sotu))
+
+lengths(lsa_sotu)
+```
+
+```{r}
+top_names <- paste0("V", seq.int(8))
+
+for (i in top_names) {
+    abs(lsa_sotu$tk) |>
+    as.data.frame() |>
+    arrange(desc(get(i))) |>
+    rownames() |>
+    head(4) |>
+    print()
+}
+```
+
+
+```{r}
+to_remove <- c(
+    "will", "must", "can", "american", "america",
+    "year", "people", "country", "also", "now", "have",
+    "thank", "good", "new", "come", "get", "known", "would",
+    "just", "let", "make", "congress", "like", "every",
+    "take", "americans", "st", "us", "government", "these"
+)
+
+dtm_sotu_sub <- dtm_sotu |> dtm_stopper(stop_list = to_remove)
+lsa_sotu_sub <- lsa(t(dtm_sotu_sub))
+```
+
+```{r}
+top_names <- colnames(as.data.frame(lsa_sotu_sub$tk))
+
+for (i in top_names) {
+    abs(lsa_sotu_sub$tk) |>
+    as.data.frame() |>
+    arrange(desc(get(i))) |>
+    rownames() |>
+    head(5) |>
+    print()
+}
+```
+
+```{r}
+opts <- list(seed = 61761)
+
+lda_sotu <- LDA(dtm_sotu, k = 9, control = opts)
+```
+
+```{r}
+lda_sotu_sub <- LDA(dtm_sotu_sub, k = 20, control = opts)
+```
+
+```{r}
+terms(lda_sotu_sub, 5)
+```

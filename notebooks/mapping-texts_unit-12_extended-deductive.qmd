@@ -1,0 +1,248 @@
+# _Mapping Texts_ - Chapter 12 - Extended Deductive
+
+```{r}
+install.packages(c(
+    "backbone",
+    "caret",
+    "ggraph",
+    "gutenbergr",
+    "igraph",
+    "keras",
+    "quanteda.textmodels", 
+    "quanteda", 
+    "reticulate",
+    "rsample",
+    "rsample", 
+    "rsvd",
+    "semgram",
+    "sna",
+    "spacyr",
+    "stringi",
+    "text2map", 
+    "text2vec", 
+    "textclean",
+    "tidymodels", 
+    "tidytext", 
+    "tidyverse"
+))
+
+library(remotes)
+install_gitlab("culturalcartography/text2map.pretrained")
+```
+
+## Supervision and Validation
+
+### Logistic Regression
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(tidytext)
+library(text2map)
+library(rsample)
+library(text2vec)
+library(quanteda.textmodels)
+library(quanteda)
+library(caret)
+```
+
+```{r}
+data("corpus_isot_fake_news2k", package = "text2map.corpora")
+
+df_isot <- corpus_isot_fake_news2k |>
+    mutate(text = tolower(text),
+    text = gsub("[[:punct:]]+", " ", text),
+    text = gsub("[[:digit:]]+", " ", text),
+    text = str_squish(text)
+)
+```
+
+```{r}
+# set a random seed for repeatable results
+set.seed(19063)
+
+init <- initial_split(df_isot, prop = 3 / 4, strata = "rating")
+
+df_trn <- training(init)
+df_tst <- testing(init)
+```
+
+```{r}
+dtm_trn <- df_trn |>
+    dtm_builder(text, doc_id = doc_id) |>
+    dtm_stopper(stop_docfreq = c(3L, Inf))
+
+dtm_tst <- df_tst |>
+    dtm_builder(text, doc_id = doc_id, vocab = colnames(dtm_trn))
+```
+
+```{r}
+lr_fit <- textmodel_lr(
+    x = as.dfm(dtm_trn),
+    y = as.factor(df_trn$rating)
+)
+```
+
+```{r}
+lr_pred <- predict(lr_fit, newdata = as.dfm(dtm_tst), type = "class")
+```
+
+```{r}
+confusionMatrix(lr_pred, as.factor(df_tst$rating))
+```
+
+```{r}
+feat_weights <- function(model, n) {
+    return(
+        coef(model) |> as.matrix() |>
+            as.data.frame() |> rename(value = 1) |>
+            rownames_to_column("term") |>
+            select(term, value) |>
+            slice_max(value, n = n, with_ties = FALSE)
+    )
+}
+
+feat_weights(lr_fit, n = 5)
+```
+
+```{r}
+dtm_trn_wo <- df_trn |>
+    dtm_builder(text, doc_id = doc_id) |>
+    dtm_stopper(stop_list = c("reuters"), stop_docfreq = c(3L, Inf))
+
+dtm_tst_wo <- df_tst |>
+    dtm_builder(text, doc_id = doc_id, vocab = colnames(dtm_trn_wo))
+
+lr_fit_wo <- textmodel_lr(
+    x = as.dfm(dtm_trn_wo),
+    y = as.factor(df_trn$rating)
+)
+
+lr_pred_wo = predict(lr_fit_wo, newdata = as.dfm(dtm_tst_wo), type = "class")
+
+confusionMatrix(lr_pred_wo, as.factor(df_tst$rating))
+```
+
+### Naive Bayes
+
+## Training with Neural Networks
+
+```{r}
+install.packages("keras3")
+```
+
+```{r}
+library(tidyverse)
+library(text2map)
+library(rsample)
+library(caret)
+library(keras3)
+library(reticulate)
+```
+
+```{r}
+use_virtualenv("./.venv")
+```
+
+```{r}
+data("corpus_finefoods10k", package = "text2map.corpora")
+
+df_food <- corpus_finefoods10k |>
+    mutate(text = tolower(text),
+    text = gsub("[[:punct:]]+", " ", text),
+    text = gsub("[[:digit:]]+", " ", text),
+    text = str_squish(text),
+    label = case_when(
+        score >= 4 ~ 0,
+        score == 3 ~ 1,
+        score <= 2 ~ 2)
+    )
+
+set.seed(19063)
+
+init <- initial_split(df_food, prop = 3/4, strata = "label")
+
+df_trn <- training(init)
+df_tst <- testing(init)
+
+dtm_trn <- df_trn |>
+    dtm_builder(text, doc_id = review_id) |>
+    dtm_stopper(stop_docfreq = c(3L, Inf))
+
+dtm_tst <- df_tst |>
+    dtm_builder(text, doc_id = review_id, vocab = colnames(dtm_trn))
+```
+
+```{r}
+py_require("tensorflow")
+```
+
+```{r}
+ke_dtm_trn <- array_reshape(as.matrix(dtm_trn), dim = dim(dtm_trn))
+ke_dtm_tst <- array_reshape(as.matrix(dtm_tst), dim = dim(dtm_tst))
+
+y_trn <- to_categorical(df_trn$label, num_classes = 3)
+y_tst <- to_categorical(df_tst$label, num_classes = 3)
+```
+
+```{r}
+ke_mod <- keras_model_sequential()
+
+ke_mod |> 
+    layer_dense(units = 1200,
+        activation = "relu",
+        input_shape = ncol(ke_dtm_trn)) |>
+    layer_dense(units = 3, activation = "softmax")
+```
+
+```{r}
+ke_mod |> compile(loss = "categorical_crossentropy", optimizer = "sgd", metrics = "accuracy")
+```
+
+```{r}
+history <- ke_mod |>
+    fit(ke_dtm_trn, y_trn, epochs = 10)
+```
+
+```{r}
+ke_mod |> evaluate(ke_dtm_tst, y_tst, verbose = 0)
+```
+
+```{r}
+n_words <- 100
+
+seq_trn <- df_trn |> seq_builder(text, maxlen = n_words)
+seq_tst <- df_tst |> seq_builder(text, maxlen = n_words)
+v_vocab <- length(attr(seq_trn, "dic")) + 1
+```
+
+```{r}
+ke_mod <- keras_model_sequential()
+
+ke_mod <- ke_mod |>
+    layer_embedding(input_dim = v_vocab, output_dim = 128, input_length = n_words) |>
+    layer_global_average_pooling_1d() |>
+    layer_dense(units = 1200, activation = "relu") |>
+    layer_dense(units = 3, activation = "softmax")
+
+ke_mod <- ke_mod |> compile(loss = "categorical_crossentropy", optimizer = "sgd", metrics = "accuracy")
+
+history <- ke_mod |> fit(seq_trn, y_trn, epochs = 10)
+```
+
+```{r}
+ke_mod |> evaluate(seq_tst, y_tst, verbose = 0)
+```
+
+## Inference with Text Networks
+
+```{r}
+library(tidyverse)
+library(text2map)
+library(ggraph)
+library(igraph)
+library(text2vec)
+library(backbone)
+library(textclean)
+library(sna)
+```
